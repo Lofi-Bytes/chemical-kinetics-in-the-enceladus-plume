@@ -1,0 +1,562 @@
+\documentclass[12pt, letterpaper]{article}
+
+\usepackage{graphicx}
+\usepackage[hmargin=1in,vmargin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{csquotes}
+\usepackage{makecell}
+
+\usepackage[tableposition=top]{caption}
+
+\usepackage{makecell}
+
+\usepackage{./aas_macros}
+\usepackage{natbib}
+\bibpunct{[} {]} {;} {a} {,} {,}
+\usepackage[section]{placeins}
+
+% Force pdflatex to use correct paper size.
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+% I want my own command to create the backslash character.
+\newcommand{\bslash}[0]{\textbackslash}
+\newcommand{\func}[2]{$f(#1)=#2$}
+\newcommand{\tild}{\raise.17ex\hbox{$\scriptstyle\sim$}}
+\newcommand{\degree}{\ensuremath{^\circ}}
+
+\let\oldhat\hat
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\renewcommand{\hat}[1]{\oldhat{\mathbf{#1}}}
+
+\usepackage{titlesec}
+\setcounter{secnumdepth}{5}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\begin{document}
+
+% Set up title page.
+\title{A Description of Enceladus' Plume Sources and Chemical Reactions Significant to the Plume-Magnetosphere Interaction}
+\author{Jonathan S. Nickerson}
+\date{}
+
+% Create both title page and begin a new page.
+% Use page breaks.
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\begin{abstract}
+This document is an overview of the physical properties and locations of the jets on Enceladus' surface as well as the important chemical reactions, rates, and cross-sections needed by BATS-R-US in order to simulate the Enceladus plume and its interaction with Saturn's magnetosphere.
+\end{abstract}
+
+% You can also do subsection, subsubsection, chapter, part, etc.
+\section{Description of Sources}
+\label{sec:1}
+
+\subsection{Location / description of sources on Enceladus}
+These values are not terribly well constrained however they provide a good starting point for this simulation. The idea isn't to reproduce exactly every little blip seen by Cassini, but to get a general idea of what Cassini might see as it passes through certain features of the plume.
+
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{There are 8 known sources (as of 2007) with the following locations \citep{Spitale07}.}
+\begin{tabular}[l]{ l l c c c c }
+\hline
+Source & Tiger Stripe & Latitude [\degree] & Longitude [\degree] & Azimuth [\degree] & Zenith [\degree] \\
+\hline
+\hline
+I & Baghdad & -81.5 & 32.8 & 228.7 & 9.7 \\ 
+II & Damascus & -79.4 & 315.5 & 93.8 & 6.8 \\
+III & Damascus & -81.3 & 292.8 & 83.2 & 30.2 \\
+IV & Alexandria & -72.9 & 148.7 & 110.0 & 3.7 \\ 
+V & Cairo & -78.6 & 72.3 & 229.8 & 6.0 \\
+VI & Baghdad & -87.1 & 231.4 & 187.6 & 10.2 \\
+VII & Baghdad & -74.6 & 29.8 & 352.5 & 20.8 \\ 
+VIII & Cairo & -82.1 & 115.5 & 127.7 & 6.8 \\
+\end{tabular}
+\end{table}
+
+\subsection{Properties of H$_{2}$O gas for each source}
+According to \citet{Hansen11}, the EUV spectral signature of the plume seen during a solar occultation was dominated by H$_{2}$O gas with negligible amounts of N$_{2}$.
+\renewcommand{\arraystretch}{1.5}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{These values are for the plume as a whole, as we do not have a way of measuring/estimating the rate for individual jets. The values in this table come from \citep{Hansen11}. We have no estimate for the gas temperature.}
+\begin{tabular}[l]{ c c c c } 
+\hline
+Velocity & Line-of-site Column Density & Production Rate & Temperature \\
+\hline
+\hline
+Exceeding 1000 [m s$^{-1}$] & $0.90 \pm 0.23 \times 10^{16}$ [cm$^{-2}$] & \tild 200 kg s$^{-1}$ & ? \\
+\end{tabular}
+\end{table}
+
+\subsection{Dust outflow}
+
+! This section is incomplete - I will come back to this !
+
+\citet{Hedman13} says \enquote{This can be interpreted as a difference in the maximum launch velocity of the observed particles, with $v_{max} = 200 \pm 3$ m s$^{-1}$ when Enceladus is near pericentre and $v_{max} = 190 \pm 2$ m s$^{-1}$ when Enceladus is near apocentre. Hence the particles visible at 0.88-1.56 $\mu$m seem to be launched with a slightly larger maximum speed}
+
+
+\section{Chemistry}
+\label{sec:2}
+
+\begin{eqnarray}
+\frac{\partial n_{\alpha}}{\partial t} & = & \mathcal{S}_{\alpha} - \mathcal{L}_{\alpha}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{S}^{\text{neut}}_{\alpha} & = & N_{\text{src},\alpha} \delta_{\alpha} \nonumber \\
+& & + \sum_{\beta,j} \left( D_{\beta \left( j \right)} n_{\text{e}} + D^{\text{h}}_{\beta \left( j \right)} n_{\text{eh}} \right) n_{\beta} \nonumber \\
+& & + \sum_{\beta,j} \left( I^{\text{diss}}_{\beta \left( j \right)} n_{\text{e}} + I^{\text{diss,h}}_{\beta \left( j \right)} n_{\text{eh}} \right) n_{\beta} \nonumber \\
+& & + \left( R_{\alpha_{+}} n_{\text{e}} + R_{\alpha_{+}}^{\text{h}} n_{\text{eh}} \right) n_{\alpha_{+}} \nonumber \\
+& & + \sum_{\beta,j} \left( R^{\text{diss}}_{\beta \left( j \right)} n_{\text{e}} + R^{\text{diss,h}}_{\beta \left( j \right)} n_{\text{eh}} \right) n_{\beta} \nonumber \\
+& & + \sum_{\beta,j} \left( \kappa^{\text{diss}}_{\beta \left( j \right)} + \kappa^{\text{diss,ion}}_{\beta \left( j \right)} \right) n_{\beta} \nonumber \\
+& & + \sum_{\gamma, \beta, j} k_{\gamma \beta \left( j \right)} n_{\gamma} n_{\beta}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}^{\text{neut}}_{\alpha} & = & \left( I_{\alpha} n_{\text{e}} + I^{\text{h}}_{\alpha} n_{\text{eh}} \right) n_{\alpha} \nonumber \\
+& & + \sum_{j} \left( I^{\text{diss}}_{\alpha \left( j \right)} n_{\text{e}} + I^{\text{diss,h}}_{\alpha \left( j \right)} n_{\text{eh}} \right) n_{\alpha} \nonumber \\
+& & + \kappa^{\text{ion}}_{\alpha} n_{\alpha} \nonumber \\
+& & + \sum_{j} \left( \kappa^{\text{diss}}_{\alpha \left( j \right)} + \kappa^{\text{diss,ion}}_{\alpha \left( j \right)} \right) n_{\alpha} \nonumber \\
+& & + \sum_{\beta,j} k_{\alpha \beta \left( j \right)} n_{\alpha} n_{\beta} \nonumber \\
+& & + \sum_{j} \left( D_{\alpha \left( j \right)} n_{\text{e}} + D^{\text{h}}_{\alpha \left( j \right)} n_{\text{eh}} \right) n_{\alpha}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{S}^{\text{ion}}_{\alpha} & = & \left( I_{\alpha_{-}} n_{\text{e}} + I_{\alpha_{-}}^{\text{h}} n_{\text{eh}} \right) n_{\alpha_{-}} \nonumber \\
+& & + \sum_{\beta,j} \left( I^{\text{diss}}_{\beta \left( j \right)} n_{\text{e}} + I^{\text{diss,h}}_{\beta \left( j \right)} n_{\text{eh}} \right) n_{\beta} \nonumber \\
+& & + \left( R_{\alpha_{+}} n_{\text{e}} + R_{\alpha_{+}}^{\text{h}} n_{\text{eh}} \right) n_{\alpha_{+}} \nonumber \\
+& & + \sum_{\beta,j} \left( R^{\text{diss}}_{\beta \left( j \right)} n_{\text{e}} + R^{\text{diss,h}}_{\beta \left( j \right)} n_{\text{eh}} \right) n_{\beta} \nonumber \\
+& & + \kappa_{\alpha_{-}}^{\text{ion}} n_{\alpha_{-}} \nonumber \\
+& & + \sum_{\beta,j} \left( \kappa^{\text{diss}}_{\beta \left( j \right)} + \kappa^{\text{diss,ion}}_{\beta \left( j \right)} \right) n_{\beta} \nonumber \\
+& & + \sum_{\gamma, \beta, j} k_{\gamma \beta \left( j \right)} n_{\gamma} n_{\beta}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}^{\text{ion}}_{\alpha} & = & \left( I_{\alpha} n_{\text{e}} + I_{\alpha}^{\text{h}} n_{\text{eh}} \right) n_{\alpha} \nonumber \\
+& & + \sum_{j} \left( I^{\text{diss}}_{\alpha \left( j \right)} n_{\text{e}} + I^{\text{diss,h}}_{\alpha \left( j \right)} n_{\text{eh}} \right) n_{\alpha} \nonumber \\
+& & + \left( R_{\alpha} n_{\text{e}} + R_{\alpha}^{\text{h}} n_{\text{eh}} \right) n_{\alpha} \nonumber \\
+& & + \sum_{j} \left( R^{\text{diss}}_{\alpha \left( j \right)} n_{\text{e}} + R^{\text{diss,h}}_{\alpha \left( j \right)} n_{\text{eh}} \right) n_{\alpha} \nonumber \\
+& & + \kappa_{\alpha}^{\text{ion}} n_{\alpha} \nonumber \\
+& & + \sum_{j} \left( \kappa^{\text{diss}}_{\alpha \left( j \right)} + \kappa^{\text{diss,ion}}_{\alpha \left( j \right)} \right) n_{\alpha} \nonumber \\
+& & + \sum_{\beta, j} k_{\alpha \beta \left( j \right)} n_{\alpha} n_{\beta}
+\end{eqnarray}
+
+
+
+\begin{eqnarray}
+V & = & \frac{1}{3} \pi r^{2} h \nonumber \\
+& = & \frac{1}{3} \pi r^{2} \left( v \text{d}t \right)
+\end{eqnarray}
+but $r = v\text{d}t \tan \theta$ so
+\begin{eqnarray}
+V & = & \frac{1}{3} \pi \left( v \text{d}t \right) ^{3} \tan ^{2} \theta
+\end{eqnarray}
+and assume $\theta = \frac{\pi}{6}$.
+
+Because the plume is dominantly water vapor gas we will neglect other trace molecules. This study will focus only on the dominant reactions involving water group ions (W$^{+}$ $\equiv$ O$^{+}$ $+$ OH$^{+}$ $+$ H$_{2}$O$^{+}$ $+$ H$_{3}$O$^{+}$).
+
+There are 7 groups of reactions that must be considered: 1) charge exchange reactions, 2) photolytic reactions, 3) impact dissociation reactions, 4) electron impact ionization reactions, 5) electron impact ionization-dissociation reactions, 6) electron recombination reactions, and 7) dissociative electronic recombination reactions. In addition, for electron impact ionization and dissociation one must account for a \enquote{hot electron} population. The following tables of reactions were provided by \citep{Fleshman10}. Bold facing guides the eye to the most important reactions.
+
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{Charge exchange reactions / rates}
+\begin{tabular}[l]{ l c l l }
+\hline
+\Gape[1.8em][1em] & Reaction & & $k_{\alpha \beta}$ [cm$^{3}$ s$^{-1}$] \\
+\hline
+\hline
+\Gape[1.6em][0em] \bf{H$^{+}$ $+$ H} & $\rightarrow$ & \bf{H $+$ H$^{+}$} & $9.7 \times 10^{-9}$ \\ 
+
+H$^{+}$ $+$ H$_{2}$ & $\rightarrow$ & H $+$ H$_{2}^{+}$ & $1.6 \times 10^{-9}$ \\ 
+
+\bf{H$^{+}$ $+$ O} & $\rightarrow$ & \bf{H $+$ O$^{+}$} & $3.0 \times 10^{-9}$ \\ 
+
+\bf{H$^{+}$ $+$ OH} & $\rightarrow$ & \bf{H $+$ OH$^{+}$} & $3.0 \times 10^{-10}$ \\ 
+
+\bf{H$^{+}$ $+$ H$_{2}$O} & $\rightarrow$ & \bf{H $+$ H$_{2}$O$^{+}$} & $2.0 \times 10^{-8}$ \\
+
+H$_{2}^{+}$ $+$ H$_{2}$ & $\rightarrow$ & H$_{2}$ $+$ H$_{2}^{+}$ & $3.6 \times 10^{-9}$ \\
+
+H$_{2}^{+}$ $+$ O & $\rightarrow$ & H $+$ OH$^{+}$ & $1.0 \times 10^{-9}$ \\
+
+H$_{2}^{+}$ $+$ OH & $\rightarrow$ & H $+$ H$_{2}$O$^{+}$ & $7.6 \times 10^{-10}$ \\
+
+H$_{2}^{+}$ $+$ OH & $\rightarrow$ & H$_{2}$ $+$ OH$^{+}$ & $7.6 \times 10^{-10}$ \\
+
+H$_{2}^{+}$ $+$ H$_{2}$O & $\rightarrow$ & H $+$ H$_{3}$O$^{+}$ & $3.4 \times 10^{-9}$ \\
+
+H$_{2}^{+}$ $+$ H$_{2}$O & $\rightarrow$ & H$_{2}$ $+$ H$_{2}$O$^{+}$ & $3.9 \times 10^{-9}$ \\
+
+\bf{O$^{+}$ $+$ H } & $\rightarrow$ & \bf{O $+$ H$^{+}$} & $3.4 \times 10^{-9}$ \\
+
+O$^{+}$ $+$ H$_{2}$ & $\rightarrow$ & H $+$ OH$^{+}$ & $1.6 \times 10^{-9}$ \\
+
+\bf{O$^{+}$ $+$ O} & $\rightarrow$ & \bf{O $+$ O$^{+}$} & $6.2 \times 10^{-9}$ \\
+
+\bf{O$^{+}$ $+$ OH} & $\rightarrow$ & \bf{O $+$ OH$^{+}$} & $3.0 \times 10^{-10}$ \\
+
+\bf{O$^{+}$ $+$ H$_{2}$O} & $\rightarrow$ & \bf{O $+$ H$_{2}$O$^{+}$} & $2.3 \times 10^{-9}$ \\
+
+O$^{++}$ $+$ O & $\rightarrow$ & O$^{+}$ $+$ O$^{+}$ & $5.2 \times 10^{-10}$ \\
+
+O$^{++}$ $+$ O & $\rightarrow$ & O $+$ O$^{++}$ & $5.4 \times 10^{-9}$ \\
+
+OH$^{+}$ $+$ H$_{2}$ & $\rightarrow$ & H $+$ H$_{2}$O$^{+}$ & $1.1 \times 10^{-9}$ \\
+
+\bf{OH$^{+}$ $+$ OH} & $\rightarrow$ & \bf{O $+$ H$_{2}$O$^{+}$} & $7.0 \times 10^{-10}$ \\
+
+\bf{OH$^{+}$ $+$ H$_{2}$O} & $\rightarrow$ & \bf{O $+$ H$_{3}$O$^{+}$} & $1.3 \times 10^{-9}$ \\
+
+\bf{OH$^{+}$ $+$ H$_{2}$O} & $\rightarrow$ & \bf{OH $+$ H$_{2}$O$^{+}$} & $1.6 \times 10^{-9}$ \\
+
+H$_{2}$O$^{+}$ $+$  H$_{2}$& $\rightarrow$ & H $+$ H$_{3}$O$^{+}$ & $6.1 \times 10^{-10}$ \\
+
+\bf{H$_{2}$O$^{+}$ $+$ H$_{2}$O} & $\rightarrow$ & \bf{OH $+$ H$_{3}$O$^{+}$} & $2.1 \times 10^{-9}$ \\
+
+\bf{H$_{2}$O$^{+}$ $+$ H$_{2}$O} & $\rightarrow$ & \Gape[0em][1.0em]{\bf{H$_{2}$O $+$ H$_{2}$O$^{+}$}} & $7.9 \times 10^{-9}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{Photolytic reactions / rates}
+\begin{tabular}[l]{ l c l l }
+\hline
+\Gape[1.8em][1em] & Reaction & & $\kappa ^{\text{ion}}_{\alpha}$ [cm$^{3}$ s$^{-1}$] \\
+\hline
+\hline
+\Gape[1.0em][0em]{H $+$ $\gamma$} & $\rightarrow$ & H$^{+}$ $+$ e & $8.0 \times 10^{-10}$ \\ 
+H$_{2}$ $+$ $\gamma$ & $\rightarrow$ & H$_{2}^{+}$ $+$ e & $5.9 \times 10^{-10}$ \\ 
+\bf{O $+$ $\gamma$} & $\rightarrow$ & \bf{O$^{+}$ $+$ e} & $2.3 \times 10^{-9}$ \\ 
+\bf{OH $+$ $\gamma$} & $\rightarrow$ & \bf{OH$^{+}$ $+$ e} & $3.7 \times 10^{-9}$ \\ 
+H$_{2}$O $+$ $\gamma$ & $\rightarrow$ & H$_{2}$O$^{+}$ $+$ e & $3.7 \times 10^{-9}$ \\  
+
+\Gape[1.6em][1em] & & & \underline{$\kappa^{\text{diss}}_{\alpha}$ [cm$^{3}$ s$^{-1}$]} \\
+H$_{2}$ $+$ $\gamma$ & $\rightarrow$ & H $+$ H & $4.9 \times 10^{-10}$ \\ 
+\bf{OH $+$ $\gamma$} & $\rightarrow$ & \bf{O $+$ H} & $5.5 \times 10^{-8}$ \\ 
+\bf{H$_{2}$O $+$ $\gamma$} & $\rightarrow$ & \bf{H $+$ OH} & $1.1 \times 10^{-7}$ \\ 
+\bf{H$_{2}$O $+$ $\gamma$} & $\rightarrow$ & \bf{H$_{2}$ $+$ O} & $1.5 \times 10^{-8}$ \\ 
+
+\Gape[1.6em][1em] & & & \underline{$\kappa^{\text{diss,ion}}_{\alpha}$ [cm$^{3}$ s$^{-1}$]} \\
+H$_{2}$ $+$ $\gamma$ & $\rightarrow$ & H$^{+}$ $+$ H $+$ e & $1.0 \times 10^{-10}$ \\ 
+H$_{2}$O $+$ $\gamma$ & $\rightarrow$ & H$^{+}$ $+$ OH $+$ e & $1.4 \times 10^{-10}$ \\ 
+H$_{2}$O $+$ $\gamma$ & $\rightarrow$ & O$^{+}$ $+$ H$_{2}$ $+$ e & $6.4 \times 10^{-11}$ \\ 
+\Gape[0em][1.0em]{H$_{2}$O $+$ $\gamma$}& $\rightarrow$ & OH$^{+}$ $+$ H $+$ e & $6.1 \times 10^{-10}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{Impact dissociation reactions / rates}
+\begin{tabular}[l]{ l c l l }
+\hline
+\Gape[1.8em][1em] & Reaction & & $D_{\alpha}$ [cm$^{3}$ s$^{-1}$] \\
+\hline
+\hline
+\Gape[1.0em][0em]{H$_{2}$ $+$ e} & $\rightarrow$ & H $+$ H $+$ e & $1.9 \times 10^{-9}$ \\ 
+\bf{OH $+$ e} & $\rightarrow$ & \bf{O $+$ H $+$ e} & $6.7 \times 10^{-11}$ \\ 
+\bf{H$_{2}$O $+$ e} & $\rightarrow$ & \bf{OH $+$ H $+$ e} & $1.2 \times 10^{-9}$ \\
+
+\Gape[1.6em][1em] & & & \underline{$D^{\text{h}}_{\alpha}$ [cm$^{3}$ s$^{-1}$]} \\
+H$_{2}$ $+$ e$_{h}$ & $\rightarrow$ & H $+$ H $+$ e & $2.3 \times 10^{-6}$ \\ 
+\bf{OH $+$ e$_{\text{h}}$} & $\rightarrow$ & \bf{O $+$ H $+$ e} & $8.4 \times 10^{-8}$ \\ 
+\Gape[0em][1.0em]{\bf{H$_{2}$O $+$ e$_{\text{h}}$}} & $\rightarrow$ & \bf{OH $+$ H $+$ e} & $1.5 \times 10^{-6}$ \\ 
+\hline
+\end{tabular}
+\end{table}
+
+
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{Electron impact ionization reactions / rates}
+\begin{tabular}[l]{ l c l l }
+\hline
+\Gape[1.8em][1em] & Reaction & & $I_{\alpha}$ [cm$^{3}$ s$^{-1}$] \\
+\hline
+\hline
+\Gape[1.0em][0em]{H $+$ e} & $\rightarrow$ & H$^{+}$ $+$ 2e & $1.1 \times 10^{-11}$ \\ 
+O $+$ e & $\rightarrow$ & O$^{+}$ $+$ 2e & $1.3 \times 10^{-11}$ \\ 
+O$^{+}$ $+$ e & $\rightarrow$ & O$^{++}$ $+$ 2e & $2.4 \times 10^{-16}$ \\ 
+\bf{OH $+$ e} & $\rightarrow$ & \bf{OH$^{+}$ $+$ 2e} & $5.3 \times 10^{-11}$ \\ 
+H$_{2}$O $+$ e & $\rightarrow$ & H$_{2}$O$^{+}$ $+$ 2e & $7.0 \times 10^{-12}$ \\
+
+\Gape[1.6em][1em] & & & \underline{$I^{\text{h}}_{\alpha}$ [cm$^{3}$ s$^{-1}$]} \\
+\bf{H $+$ e$_{h}$} & $\rightarrow$ & \bf{H$^{+}$ $+$ 2e} & $3.2 \times 10^{-8}$ \\ 
+\bf{O $+$ e$_{h}$} & $\rightarrow$ & \bf{O$^{+}$ $+$ 2e} & $9.0 \times 10^{-8}$ \\ 
+O$^{+}$ $+$ e$_{h}$ & $\rightarrow$ & O$^{++}$ $+$ 2e & $2.7 \times 10^{-8}$ \\ 
+\bf{OH $+$ e$_{h}$} & $\rightarrow$ & \bf{OH$^{+}$ $+$ 2e} & $1.2 \times 10^{-7}$ \\  
+\Gape[0em][1.0em]{\bf{H$_{2}$O $+$ e$_{h}$}} & $\rightarrow$ & \bf{H$_{2}$O$^{+}$ $+$ 2e} & $9.1 \times 10^{-8}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{Electron impact ionization-dissociation reactions / rates}
+\begin{tabular}[l]{ l c l l }
+\hline
+\Gape[1.8em][1em] & Reaction & & $I^{\text{diss}}_{\alpha}$ [cm$^{3}$ s$^{-1}$] \\
+\hline
+\hline
+\Gape[1.0em][0em]{H$_{2}$O $+$ e} & $\rightarrow$ & H$^{+}$ $+$ OH $+$ 2e & $5.3 \times 10^{-14}$ \\ 
+H$_{2}$O $+$ e & $\rightarrow$ & O$^{+}$ $+$ 2H $+$ 2e & $3.2 \times 10^{-15}$ \\ 
+H$_{2}$O $+$ e & $\rightarrow$ & OH$^{+}$ $+$ H $+$ 2e & $1.1 \times 10^{-12}$ \\
+
+\Gape[1.6em][1em] & & & \underline{$I^{\text{diss,h}}_{\alpha}$ [cm$^{3}$ s$^{-1}$]} \\
+\bf{H$_{2}$O $+$ e$_{h}$} & $\rightarrow$ & \bf{H$^{+}$ $+$ OH $+$ 2e} & $4.1 \times 10^{-8}$ \\ 
+H$_{2}$O $+$ e$_{h}$ & $\rightarrow$ & O$^{+}$ $+$ 2H $+$ 2e & $1.1 \times 10^{-8}$ \\  
+\Gape[0em][1.0em]{\bf{H$_{2}$O $+$ e$_{h}$}} & $\rightarrow$ & \bf{OH$^{+}$ $+$ H $+$ 2e} & $4.5 \times 10^{-8}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{Electron recombination reactions / rates}
+\begin{tabular}[l]{ l c l l }
+\hline
+\Gape[1.8em][1em] & Reaction & & $R_{\alpha}$ [cm$^{3}$ s$^{-1}$] \\
+\hline
+\hline
+\Gape[1.0em][0em]{H$^{+}$ $+$ e} & $\rightarrow$ & H & $8.5 \times 10^{-11}$ \\ 
+O$^{+}$ $+$ e & $\rightarrow$ & O & $3.2 \times 10^{-13}$ \\ 
+O$^{++}$ $+$ e & $\rightarrow$ & O$^{+}$ & $1.9 \times 10^{-12}$ \\ 
+
+\Gape[1.6em][1em] & & & \underline{$R^{\text{h}}_{\alpha}$ [cm$^{3}$ s$^{-1}$]} \\
+H$^{+}$ $+$ e$_{h}$ & $\rightarrow$ & H & $6.4 \times 10^{-12}$ \\ 
+O$^{+}$ $+$ e$_{h}$ & $\rightarrow$ & O & $3.0 \times 10^{-13}$ \\ 
+\Gape[0em][1.0em]{O$^{++}$ $+$ e$_{h}$} & $\rightarrow$ & O$^{+}$ & $1.5 \times 10^{-12}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\renewcommand{\arraystretch}{1.1}
+\begin{table}[h!]
+\centering
+\label{label 1}
+\caption{Dissociative electronic recombination reactions / rates}
+\begin{tabular}[l]{ l c l l }
+\hline
+\Gape[1.8em][1em] & Reaction & & $R^{\text{diss}}_{\alpha}$ [cm$^{3}$ s$^{-1}$] \\
+\hline
+\hline
+\Gape[1.0em][0em]{H$_{2}^{+}$ $+$ e} & $\rightarrow$ & H $+$ H & $2.0 \times 10^{-8}$ \\ 
+\bf{OH$^{+}$ $+$ e} & $\rightarrow$ & \bf{O $+$ H} & $9.6 \times 10^{-9}$ \\ 
+\bf{H$_{2}$O$^{+}$ $+$ e} & $\rightarrow$ & \bf{OH $+$ H} & $2.0 \times 10^{-8}$ \\
+\bf{H$_{3}$O$^{+}$ $+$ e} & $\rightarrow$ & \bf{OH $+$ H$_{2}$} & $1.4 \times 10^{-8}$ \\ 
+
+\Gape[1.6em][1em] & & & \underline{$R^{\text{diss,h}}_{\alpha}$ [cm$^{3}$ s$^{-1}$]} \\
+H$_{2}^{+}$ $+$ e$_{h}$ & $\rightarrow$ & H $+$ H & $2.0 \times 10^{-8}$ \\ 
+OH$^{+}$ $+$ e$_{h}$ & $\rightarrow$ & O $+$ H & $1.1 \times 10^{-9}$ \\ 
+H$_{2}$O$^{+}$ $+$ e$_{h}$ & $\rightarrow$ & OH $+$ H & $8.9 \times 10^{-11}$ \\
+\Gape[0em][1.0em]{H$_{3}$O$^{+}$ $+$ e$_{h}$} & $\rightarrow$ & OH $+$ H$_{2}$ & $4.7 \times 10^{-11}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+\section{Source and Loss Equations for Each Individual Neutral Species}
+\subsection{H$_{2}$O}
+
+\begin{eqnarray}
+\mathcal{S}_{\text{H}_{2}\text{O}} & = & 1.2044 \times 10 ^{29} \left[ \frac{\text{molecules}}{s} \right] + \left[ \left( K13 \right) \cdot n_{\text{H}_{2}\text{O}^{+}} \right] \cdot n_{\text{H}_{2}\text{O}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{H}_{2}\text{O}} & = & \left[ J04 + J05 + J10 + J11 + J12 + J13 \right. \nonumber \\
+& & \left. + \left( D02 + I04 + ID01 + ID02 + ID03 \right) \cdot n_{\text{e}} \right. \nonumber \\
+& & \left. + \left( K04 \right) \cdot n_{\text{H}^{+}} \right. \nonumber \\
+& & \left. + \left( K08 \right) \cdot n_{\text{O}^{+}} \right. \nonumber \\
+& & \left. + \left( K10 + K11 \right) \cdot n_{\text{OH}^{+}} \right. \nonumber \\
+& & \left. + \left( K12 + K13 \right) \cdot n_{\text{H}_{2}\text{O}^{+}} \right. \nonumber \\
+& & \left. + \left( K19 + K20 \right) \cdot n_{\text{H}_{2}^{+}} \right] \cdot n_{\text{H}_{2}\text{O}}
+\end{eqnarray}
+
+\subsection{OH}
+
+\begin{eqnarray}
+\mathcal{S}_{\text{OH}} & = & \left[ J04 + J11 + D02 + \left( ID01 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+& & + \left[ \left( RD02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}\text{O}^{+}} \nonumber \\
+& & + \left[ \left( RD03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{3}\text{O}^{+}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{OH}} & = & \left[ J02 + J03 + \left( D01 + I01 \right) \cdot n_{e} \right] \cdot n_{\text{OH}}
+\end{eqnarray}
+
+\subsection{H}
+
+\begin{eqnarray}
+\mathcal{S}_{\text{H}} & = & \left[ J04 + J13 + D02 + \left( 2 \cdot ID02 + ID03 \right) \cdot n_{e} \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+&  & + \left[ J03 + D01 \right] \cdot n_{\text{OH}} \nonumber \\
+&  & + \left[ J08 + J09 + 2 \cdot D03 \right] \cdot n_{\text{H}_{2}} \nonumber \\
+&  & + \left[ \left( R01 \right) \cdot n_{e} \right] \cdot n_{\text{H}^{+}} \nonumber \\
+&  & + \left[ \left( RD01 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{OH}^{+}} \nonumber \\
+&  & + \left[ \left( RD02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2} \text{O}^{+}} \nonumber \\
+&  & + \left[ \left( 2 \cdot RD04 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}^{+}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{H}} & = & \left[ J06 + \left( I02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}}
+\end{eqnarray}
+
+\subsection{H$_{2}$}
+
+\begin{eqnarray}
+\mathcal{S}_{\text{H}_{2}} & = & \left[ J05 + J12 \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+&  & + \left[ \left( RD03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{3} \text{O}^{+}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{H}_{2}} & = & \left[ J07 + J08 + J09 + \left( D03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}}
+\end{eqnarray}
+
+\subsection{O}
+
+\begin{eqnarray}
+\mathcal{S}_{\text{O}} & = & \left[ J05 \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+&  & + \left[ J03 + D01 \right] \cdot n_{\text{OH}} \nonumber \\
+&  & + \left[ \left( R02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{O}^{+}} \nonumber \\
+&  & + \left[ \left( RD01 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{OH}^{+}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{O}} & = & \left[ J01 + \left( I03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{O}}
+\end{eqnarray}
+
+\section{Source and Loss Equations for Each Individual Ion Species}
+\subsection{H$_{2}$O$^{+}$}
+\begin{eqnarray}
+\mathcal{S}_{\text{H}_{2}\text{O}^{+}} & = & \left[ J10 + \left( I04\right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}\text{O}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{H}_{2}\text{O}^{+}} & = & \left[ \left( RD02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2} \text{O}^{+}}
+\end{eqnarray}
+
+\subsection{H$_{3}$O$^{+}$}
+\begin{eqnarray}
+\mathcal{S}_{\text{H}_{2}\text{O}^{+}} & = & 0
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{H}_{2}\text{O}^{+}} & = & \left[ \left( RD03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{3} \text{O}^{+}}
+\end{eqnarray}
+
+\subsection{OH$^{+}$}
+\begin{eqnarray}
+\mathcal{S}_{\text{OH}^{+}} & = & \left[ J13 + \left( ID03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+& & + \left[ J02 + \left( I01 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{OH}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{OH}^{+}} & = & \left[ \left( RD01 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{OH}^{+}}
+\end{eqnarray}
+
+\subsection{H$^{+}$}
+\begin{eqnarray}
+\mathcal{S}_{\text{H}^{+}} & = & \left[ J11 + \left( ID01 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+& & + \left[ J06 + \left( I02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}} \nonumber \\
+& & + \left[ J09 \right] \cdot n_{H_{2}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{H}^{+}} & = & \left[ \left( R01 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}^{+}}
+\end{eqnarray}
+
+\subsection{H$_{2}^{+}$}
+\begin{eqnarray}
+\mathcal{S}_{\text{H}_{2}^{+}} & = & \left[ J07 \right] \cdot n_{H_{2}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{H}_{2}^{+}} & = & \left[ \left( RD04 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}^{+}}
+\end{eqnarray}
+
+\subsection{O$^{+}$}
+\begin{eqnarray}
+\mathcal{S}_{\text{O}^{+}} & = & \left[ J12 + \left( ID02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+& & + \left[ J01 + \left( I03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{O}}  \nonumber \\
+& & + \left[ \left( R03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{O}^{++}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{O}^{+}} & = & \left[ \left( I05 + R02 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{O}^{+}}
+\end{eqnarray}
+
+\subsection{O$^{++}$}
+\begin{eqnarray}
+\mathcal{S}_{\text{O}^{++}} & = & \left[ I05 \cdot n_{\text{e}} \right] \cdot n_{\text{O}^{+}} 
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{O}^{++}} & = & \left[ \left( R03 \right) \cdot n_{\text{e}} \right] \cdot n_{\text{O}^{++}}
+\end{eqnarray}
+
+\section{Source and Loss Equation for Electrons}
+\begin{eqnarray}
+\mathcal{S}_{\text{e}} & = & \left[ J11 + J12 + J13 + D02 + 2 \cdot \left( I04 + ID01 + ID02 + ID03 \right) \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+& & + \left[ J02 + D01 + 2 \cdot I01 \right] \cdot n_{\text{OH}} \nonumber \\
+& & + \left[ J06 + 2 \cdot I02 \right] \cdot n_{\text{H}} \nonumber \\
+& & + \left[ J07 + J09 + D03 \right] \cdot n_{\text{H}_{2}} \nonumber \\
+& & + \left[ J01 + 2 \cdot I03 \right] \cdot n_{\text{O}} \nonumber \\
+& & + \left[ 2 \cdot I05 \right] \cdot n_{\text{O+}}
+\end{eqnarray}
+
+\begin{eqnarray}
+\mathcal{L}_{\text{e}} & = & \left[ D02 + I04 + ID01 + ID02 + ID03 \right] \cdot n_{\text{H}_{2}\text{O}} \nonumber \\
+& & + \left[ D01 + I01 \right] \cdot n_{\text{OH}} \nonumber \\
+& & + \left[ I02 \right] \cdot n_{\text{H}} \nonumber \\
+& & + \left[ D03 \right] \cdot n_{\text{H}_{2}} \nonumber \\
+& & + \left[ I03 \right] \cdot n_{\text{O}} \nonumber \\
+& & + \left[ I05 + R02 \right] \cdot n_{\text{O+}} \nonumber \\
+& & + \left[ R01 \right] \cdot n_{\text{H}^{+}} \nonumber \\
+& & + \left[ R03 \right] \cdot n_{\text{O}^{++}} \nonumber \\
+& & + \left[ RD01 \right] n_{\text{OH}^{+}} \nonumber \\ 
+& & + \left[ RD02 \right] n_{\text{H}_{2}\text{O}^{+}} \nonumber \\
+& & + \left[ RD03 \right] n_{\text{H}_{3}\text{O}^{+}} \nonumber \\
+& & + \left[ RD04 \right] n_{\text{H}_{2}^{+}} \nonumber \\
+\end{eqnarray}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%BIBLIOG									                                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%DID YOU REMEMBER TO TYPESET THE BIBLIOGRAPHY?%%%
+\bibliographystyle{./agu04}
+\bibliography{./bibliography}  %master list
+
+% End the document environment.  No other lines will be read after this point.
+\end{document}
